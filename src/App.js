@@ -1,43 +1,59 @@
 import React, { useState } from "react";
-import MovieList from "./components/MovieList";
-import Filter from "./components/Filter";
-import AddMovie from "./components/AddMovie";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MovieList from "./component/MovieList";
+import AddMovie from "./component/AddMovie";
+import Filter from "./component/Filter";
+import MovieDescription from "./component/MovieDescription";
 
 const App = () => {
   const [movies, setMovies] = useState([
     {
+      id: 1,
       title: "Inception",
-      description: "A mind-bending thriller by Christopher Nolan.",
-      posterURL: "https://m.media-amazon.com/images/I/51oD4N4x8UL._AC_.jpg",
-      rating: 9,
+      description: "A skilled thief enters dreams to steal secrets.",
+      posterURL: "https://m.media-amazon.com/images/I/51xJd+1Oq-L._AC_SY679_.jpg",
+      rating: 5,
+      trailerLink: "https://www.youtube.com/embed/YoHD9XEInc0",
     },
     {
-      title: "Breaking Bad",
-      description: "A chemistry teacher turns to cooking meth.",
-      posterURL: "https://m.media-amazon.com/images/I/81MZ+YbB9EL._AC_SL1500_.jpg",
-      rating: 10,
+      id: 2,
+      title: "Avatar",
+      description: "A marine on an alien planet torn between two worlds.",
+      posterURL: "https://m.media-amazon.com/images/I/41vuP4z4m6L._AC_SY679_.jpg",
+      rating: 4,
+      trailerLink: "https://www.youtube.com/embed/5PSNL1qE6VY",
     },
   ]);
 
-  const [filter, setFilter] = useState({ title: "", rate: 0 });
+  const [filter, setFilter] = useState({ title: "", rating: 0 });
 
-  const addMovie = (newMovie) => {
-    setMovies([...movies, newMovie]);
+  const addMovie = (movie) => {
+    setMovies([...movies, { ...movie, id: movies.length + 1 }]);
   };
 
-  const filteredMovies = movies.filter(
-    (movie) =>
-      movie.title.toLowerCase().includes(filter.title.toLowerCase()) &&
-      movie.rating >= filter.rate
-  );
+  const handleFilter = (filterData) => {
+    setFilter(filterData);
+  };
 
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      <h1>🎥 My Movie App</h1>
-      <Filter setFilter={setFilter} />
-      <AddMovie addMovie={addMovie} />
-      <MovieList movies={filteredMovies} />
-    </div>
+    <Router>
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <h1>🎬 My Movie App</h1>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Filter handleFilter={handleFilter} />
+                <AddMovie addMovie={addMovie} />
+                <MovieList movies={movies} filter={filter} />
+              </>
+            }
+          />
+          <Route path="/movie/:id" element={<MovieDescription movies={movies} />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
